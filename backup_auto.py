@@ -1,5 +1,7 @@
 import paramiko
 import subprocess
+from pathlib import Path
+from contextlib import redirect_stdout
 i = 0
 
 #ssh config
@@ -11,7 +13,9 @@ ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 temp_output = ''
 folders = ['Server-1', 'Server-2']
-cmd = f'echo {temp_output} > /home/student/Desktop/DNS-Backup/{folders[i]}'
+target_dir = Path(f"/home/Student/Desktop/DNS-Backup/{folders[i]}")
+file = 'record-config.txt'
+file_path = target_dir / file
 
 while i < len(hostname):
     try:
@@ -24,11 +28,14 @@ while i < len(hostname):
         print(stdout.read().decode())
         temp_output = stdout.read().decode()
         error_output = stderr.read().decode()
+        with open(file_path, 'w') as f:
+            with redirect_stdout(f):
+                print(stdout.read().decode())
         if error_output:
             print(f'Error: {error_output}')
 
     finally:
         ssh.close()
         print('connection closed')
-    subprocess.run(cmd)
+
     i = i + 1
