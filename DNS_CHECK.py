@@ -28,21 +28,6 @@ msg = EmailMessage()
 msg['Subject'] = f'DNS Configuration Alert: {network_devices[i]['Device Name']} {ip_list[i]})'
 msg['From'] = sender
 msg['To'] = receiver
-msg.set_content('Dear Network Administrator,\n'
-                '\n'
-                'This is an automated alert that the DNS configuration for the following device has been altered from the expected settings:\n'
-                '\n'
-                f'Device Name: {network_devices[i]['Device Name']}\n'
-                f'IP Address: {ip_list[i]}\n'
-                'Detected DNS Setting:\n'
-                f'{temp_readout}\n'
-                'Expected DNS Setting: 10.10.10.10 or 10.10.10.20 or loopback address\n'
-                f'Time Detected: {Timestamp}\n'
-                '\n'
-                'The system will attempt to automatically correct this configuration.\n'
-                '\n'
-                'Best regards,\n'
-                'Network Monitoring System\n')
 
 #ticket config
 token = 'vGkbXkGLqQSo7YLflp9DutuG8st4xdPPF7wnTcwB0FE'
@@ -68,6 +53,22 @@ while i < len(network_devices):
         if '203.0.113.10' in temp_readout:
             bad_DNS.append(network_devices[i]['Device Address'])
             print(f'{ip_list[i]} DNS settings are wrong, email sent!')
+            msg.set_content('Dear Network Administrator,\n'
+                '\n'
+                'This is an automated alert that the DNS configuration for the following device has been altered from the expected settings:\n'
+                '\n'
+                f'Device Name: {network_devices[i]['Device Name']}\n'
+                f'IP Address: {ip_list[i]}\n'
+                'Detected DNS Setting:\n'
+                f'{temp_readout}\n'
+                'Expected DNS Setting: 10.10.10.10 or 10.10.10.20 or loopback address\n'
+                f'Time Detected: {Timestamp}\n'
+                '\n'
+                'The system will attempt to automatically correct this configuration.\n'
+                '\n'
+                'Best regards,\n'
+                'Network Monitoring System\n')
+
             try:
                 with smtplib.SMTP(stmp_s, port) as s:
                     s.login(sender, epassword)
