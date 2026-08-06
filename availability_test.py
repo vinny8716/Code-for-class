@@ -45,7 +45,9 @@ while i < len(valid_ip):
     host = valid_ip[i]
     command = ['ping', '-c', '1', host]
     result = subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    if result != 0:
+    if result.returncode == 0:
+        print(host, 'Ping Successful')
+    else:
         print(valid_ip[i], 'Ping Failed, sending email and creating ticket!')
         Device_name = network_devices[i]['Device_name']
         Timestamp = datetime.datetime.now()
@@ -83,6 +85,4 @@ while i < len(valid_ip):
         else:
             print('something went wrong')
             print(f'Status Code: {response.status_code}')
-    else:
-        print(valid_ip[i], 'Ping Successful')
     i = i + 1
