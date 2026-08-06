@@ -11,26 +11,24 @@ password = 'ubuntu'
 command = 'cat /etc/bind/named.conf.options'
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-temp_output = ''
 folders = ['Server-1', 'Server-2']
-target_dir = Path(f"/home/Student/Desktop/DNS-Backup/{folders[i]}")
+target_dir = Path(f"/home/Student/Desktop/DNS-backup/{folders[i]}")
 file = 'record-config.txt'
 file_path = target_dir / file
 
 while i < len(hostname):
     try:
         print(f'Connecting to {hostname}...')
-        ssh.connect(hostname = hostname, username = username, password = password)
+        ssh.connect(hostname = hostname[i], username = username, password = password)
 
         stdin, stdout, stderr = ssh.exec_command(command)
 
         print('\n--- Command Output ---')
         print(stdout.read().decode())
-        temp_output = stdout.read().decode()
         error_output = stderr.read().decode()
         with open(file_path, 'w') as f:
             with redirect_stdout(f):
-                print(stdout.read().decode())
+                f.write(stdout.read().decode())
         if error_output:
             print(f'Error: {error_output}')
 
