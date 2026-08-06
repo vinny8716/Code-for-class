@@ -6,7 +6,7 @@ import paramiko
 import requests
 i = 0
 #config
-ip_list = network_devices[i]['Device Address']
+ip_list = ['10.10.10.200', '10.10.10.210', '10.10.10.10', '10.10.10.20', '192.168.10.102', '192.168.20.102', '192.168.30.101', '192.168.10.101', '10.10.10.1', '10.10.10.100', '192.168.20.210', '192.168.30.210']
 device_name = network_devices[i]['Device Name']
 cmd = ['cat /etc/resolv.conf']
 username = 'ubuntu'
@@ -24,7 +24,7 @@ password = ''
 receiver = 'Stakeholders@mailhog.com'
 Timestamp = datetime.datetime.now()
 msg = EmailMessage()
-msg['Subject'] = f'DNS Configuration Alert: {network_devices[i]['Device Name']} {network_devices[i]['Device Address']})'
+msg['Subject'] = f'DNS Configuration Alert: {network_devices[i]['Device Name']} {ip_list[i]})'
 msg['From'] = sender
 msg['To'] = receiver
 msg.set_content('Dear Network Administrator,\n'
@@ -32,7 +32,7 @@ msg.set_content('Dear Network Administrator,\n'
                 'This is an automated alert that the DNS configuration for the following device has been altered from the expected settings:\n'
                 '\n'
                 f'Device Name: {network_devices[i]['Device Name']}\n'
-                f'IP Address: {network_devices[i]['Device Address']}\n'
+                f'IP Address: {ip_list[i]}\n'
                 'Detected DNS Setting:\n'
                 f'{temp_readout}\n'
                 'Expected DNS Setting: 10.10.10.10 or 10.10.10.20 or loopback address\n'
@@ -61,12 +61,12 @@ payload = {
 
 while i < len(network_devices):
     try:
-        client.connect(hostname = network_devices[i]['Device Address'], username = username, password = password, timeout = 10)
+        client.connect(hostname = ip_list[i], username = username, password = password, timeout = 10)
         stdin, stdout, stderr = client.exec_command(cmd)
         temp_readout = stdout.read().decode()
         if '203.0.113.10' in temp_readout:
             bad_DNS.append(network_devices[i]['Device Address'])
-            print(f'{network_devices[i]['Device Address']} DNS settings are wrong, email sent!')
+            print(f'{ip_list[i]} DNS settings are wrong, email sent!')
             try:
                 with smtplib.SMTP(stmp_s, port) as s:
                     s.login(sender, password)
@@ -84,7 +84,7 @@ while i < len(network_devices):
             print(stderr.read().decode())
             response = requests.post(url, headers=headers, json=payload)
         else:
-            print(f'{network_devices[i]['Device Address']} is all good!')
+            print(f'{ip_list[i]} is all good!')
     except Exception as e:
         print(f'Connection failed to {network_devices[i]['Device Name']}: {e}')
     finally:
