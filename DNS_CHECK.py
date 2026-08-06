@@ -4,11 +4,12 @@ import datetime
 from network_devices_list import network_devices
 import paramiko
 import requests
+import smtplib
 i = 0
 #config
 ip_list = ['10.10.10.200', '10.10.10.210', '10.10.10.10', '10.10.10.20', '192.168.10.102', '192.168.20.102', '192.168.30.101', '192.168.10.101', '10.10.10.1', '10.10.10.100', '192.168.20.210', '192.168.30.210']
 device_name = network_devices[i]['Device Name']
-cmd = ['cat /etc/resolv.conf']
+cmd = 'cat /etc/resolv.conf'
 username = 'ubuntu'
 password = 'ubuntu'
 temp_readout = ''
@@ -20,7 +21,7 @@ client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 stmp_s = 'smtp.d522.wgu.internal'
 port = 1025
 sender = 'ITDesk@mailhog.com'
-password = ''
+epassword = ''
 receiver = 'Stakeholders@mailhog.com'
 Timestamp = datetime.datetime.now()
 msg = EmailMessage()
@@ -69,7 +70,7 @@ while i < len(network_devices):
             print(f'{ip_list[i]} DNS settings are wrong, email sent!')
             try:
                 with smtplib.SMTP(stmp_s, port) as s:
-                    s.login(sender, password)
+                    s.login(sender, epassword)
                     s.send_message(msg)
                 print("email sent!")
             except Exception as e:
