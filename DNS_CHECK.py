@@ -35,14 +35,7 @@ url = 'http://helpdesk.d522.wgu.internal:5000/api/tickets'
 headers = {'Authorization': f'Bearer {token}',
             'Content-Type': 'application/json'
             }
-payload = {
-    "assigned_to": "John Pork",
-    "description": "DNS settings changed!",
-    "priority": "high",
-    "requester_email": "ITDesk@mailhog.com",
-    "status": "closed",
-    "title": f"{network_devices[i]['Device Name']} is down!"
-    }
+
 
 
 while i < len(network_devices):
@@ -68,6 +61,14 @@ while i < len(network_devices):
                 '\n'
                 'Best regards,\n'
                 'Network Monitoring System\n')
+            payload = {
+                "assigned_to": "John Pork",
+                "description": "DNS settings changed!",
+                "priority": "high",
+                "requester_email": "ITDesk@mailhog.com",
+                "status": "closed",
+                "title": f"{network_devices[i]['Device Name']} is down!"
+                }
 
             try:
                 with smtplib.SMTP(stmp_s, port) as s:
