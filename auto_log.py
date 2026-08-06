@@ -12,7 +12,8 @@ for device in network_devices:
         stdin, stout, stderr = ssh.exec_command('systemctl is-active resolvectl')
 
         status = stdout.read().decode('utf-8').strip()
-        if status == 'active':
+        exit_status = stdout.channel.recv_exit_status()
+        if exit_status == 0:
             with open(log_file.txt, 'a') as f:
                 f.write(f'{device["Device Name"]}' + 'DNS service is functioning correctly' + f'{Timestamp}' + '\n')
         else:
