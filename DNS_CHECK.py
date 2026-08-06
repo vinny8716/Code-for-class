@@ -24,15 +24,15 @@ password = ''
 receiver = 'Stakeholders@mailhog.com'
 Timestamp = datetime.datetime.now()
 msg = EmailMessage()
-msg['Subject'] = f'DNS Configuration Alert: {device_name} {ip_list})'
+msg['Subject'] = f'DNS Configuration Alert: {network_devices[i]['Device Name']} {network_devices[i]['Device Address']})'
 msg['From'] = sender
 msg['To'] = receiver
 msg.set_content('Dear Network Administrator,\n'
                 '\n'
                 'This is an automated alert that the DNS configuration for the following device has been altered from the expected settings:\n'
                 '\n'
-                f'Device Name: {device_name}\n'
-                f'IP Address: {ip_list}\n'
+                f'Device Name: {network_devices[i]['Device Name']}\n'
+                f'IP Address: {network_devices[i]['Device Address']}\n'
                 'Detected DNS Setting:\n'
                 f'{temp_readout}\n'
                 'Expected DNS Setting: 10.10.10.10 or 10.10.10.20 or loopback address\n'
@@ -55,18 +55,18 @@ payload = {
     "priority": "high",
     "requester_email": "ITDesk@mailhog.com",
     "status": "closed",
-    "title": f"{device_name[i]} is down!"
+    "title": f"{network_devices[i]['Device Name']} is down!"
     }
 
 
 while i < len(network_devices):
     try:
-        client.connect(hostname = ip_list, username = username, password = password, timeout = 10)
+        client.connect(hostname = network_devices[i]['Device Address'], username = username, password = password, timeout = 10)
         stdin, stdout, stderr = client.exec_command(cmd)
         temp_readout = stdout.read().decode()
         if '203.0.113.10' in temp_readout:
-            bad_DNS.append(ip_list[i])
-            print(f'{ip_list} DNS settings are wrong, email sent!')
+            bad_DNS.append(network_devices[i]['Device Address'])
+            print(f'{network_devices[i]['Device Address']} DNS settings are wrong, email sent!')
             try:
                 with smtplib.SMTP(stmp_s, port) as s:
                     s.login(sender, password)
@@ -84,9 +84,9 @@ while i < len(network_devices):
             print(stderr.read().decode())
             response = requests.post(url, headers=headers, json=payload)
         else:
-            print(f'{ip_list} is all good!')
+            print(f'{network_devices[i]['Device Address']} is all good!')
     except Exception as e:
-        print(f'Connection failed to {device_name}: {e}')
+        print(f'Connection failed to {network_devices[i]['Device Name']}: {e}')
     finally:
         client.close()
     i = i + 1
