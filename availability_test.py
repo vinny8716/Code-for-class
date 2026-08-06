@@ -37,15 +37,15 @@ valid_ip = []
 bad_ips = []
 for device in network_devices:
     try :
-        ipaddress.ip_address(device[Device_Address])
-        valid_ip.append(device[Device_Address])
+        ipaddress.ip_address(device['Device Address'])
+        valid_ip.append(device['Device Address'])
     except ValueError:
         pass
 while i < len(valid_ip):
     host = valid_ip[i]
-    output = subprocess.check_output(['ping', '-c', '1', host])
-    output = output.decode('utf-8')
-    if 'failure' in output:
+    command = ['ping', '-c', '1', host]
+    result = subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if result != 0:
         print(valid_ip[i], 'Ping Failed, sending email and creating ticket!')
         Device_name = network_devices[i]['Device_name']
         Timestamp = datetime.datetime.now()
