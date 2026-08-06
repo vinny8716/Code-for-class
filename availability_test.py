@@ -49,7 +49,7 @@ while i < len(valid_ip):
         print(host, 'Ping Successful')
     else:
         print(valid_ip[i], 'Ping Failed, sending email and creating ticket!')
-        Device_name = network_devices[i]['Device_name']
+        Device_name = network_devices[i]['Device Name']
         Timestamp = datetime.datetime.now()
         msg = EmailMessage()
         msg['Subject'] = f'Network Device Unavailable: {Device_name} ({host})'
