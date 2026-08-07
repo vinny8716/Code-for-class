@@ -9,12 +9,12 @@ for device in network_devices:
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(f'{device['Device Address']}', username='ubuntu', password='ubuntu')
 
-        stdin, stout, stderr = ssh.exec_command('systemctl is-active resolvectl')
+        stdin, stdout, stderr = ssh.exec_command('systemctl is-active systemd-resolved')
 
         status = stdout.read().decode('utf-8').strip()
         exit_status = stdout.channel.recv_exit_status()
         if exit_status == 0:
-            with open(log_file.txt, 'a') as f:
+            with open('log_file.txt', 'a') as f:
                 f.write(f'{device["Device Name"]}' + 'DNS service is functioning correctly' + f'{Timestamp}' + '\n')
         else:
             print(f'{device["Device Name"]} DNS service is down!')
